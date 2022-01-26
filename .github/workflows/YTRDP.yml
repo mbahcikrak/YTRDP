@@ -1,0 +1,27 @@
+name : YTRDP
+
+on: [push, workflow_dispath]
+
+jobs:
+	build:
+		runs-on:windows-latest
+
+		steps:
+		- name: DOWNLOADING
+		  run : Invoke-WebRequest https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-
+amd64.zip -Outfile ngrok.zip
+		- name : EXTRACT
+		  run  : Expand-Archive ngrok.zip
+		- name : AUTENTIFIKASI
+		  run  : .\ngrok\ngrok.exe authtoken 24Eylhqhnkzd4t30CL8OVjC9loQ_7i8vhokBP5tT7hz3i3Lbe
+		- name : ENABLE TS
+		  run  : Set-ItemProperty -Path'HKLM:\System\CurrentControlSet\Control\Terminal
+Server '-name "fDenyTSConnection -Value 0
+		- run  : Enable-NetfirewallRule -DisplayGroup "Remote Desktop"
+		- run  : Set-ItemProperty -Path 'HKLM:\System\CurrentControlset\Control\Terminal
+Server\WinStations\RDP-Tcp' -name "UserAuthentication" - Vlaue 1
+		- run  : Set-LocalUser -Name "runneradmin" -Password (ConvertTo-SecureString -
+AsPlainText "P@sswOrd;" - Force)
+		- name : DONE
+		  run :.\ngrok\ngrok.exe tcp 3389
+
